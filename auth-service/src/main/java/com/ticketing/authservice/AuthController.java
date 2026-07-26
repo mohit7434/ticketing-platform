@@ -1,17 +1,36 @@
 package com.ticketing.authservice;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    @PostMapping("/register")
-    public String registerUser(@RequestBody RegisterRequest request) {
-        return "User " + request.getUsername() + " registered successfully!";
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    // Simple DTO class for request body
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            return ResponseEntity.badRequest().body("Error: Username is already taken!");
+        }
+
+        // Encrypt password with BCrypt
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+
+        User user = new User(request.getUsername(), hashedPassword);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("User registered successfully in H2! User ID: " + user.getId());
+    }
+
     public static class RegisterRequest {
         private String username;
         private String password;
