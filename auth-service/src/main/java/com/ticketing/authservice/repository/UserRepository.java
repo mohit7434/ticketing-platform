@@ -1,5 +1,6 @@
-package com.ticketing.authservice;
+package com.ticketing.authservice.repository;
 
+import com.ticketing.authservice.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

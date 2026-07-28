@@ -1,4 +1,4 @@
-package com.ticketing.authservice;
+package com.ticketing.authservice.entity;
 
 import jakarta.persistence.*;
 
