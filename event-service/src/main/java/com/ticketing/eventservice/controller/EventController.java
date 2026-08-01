@@ -3,6 +3,7 @@ package com.ticketing.eventservice.controller;
 import com.ticketing.eventservice.dto.EventRequestDto;
 import com.ticketing.eventservice.entity.Event;
 import com.ticketing.eventservice.service.EventService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody EventRequestDto request) {
+    public ResponseEntity<Event> createEvent(@Valid @RequestBody EventRequestDto request) {
         Event createdEvent = eventService.createEvent(request);
         return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
     }

@@ -2,6 +2,7 @@ package com.ticketing.eventservice.service;
 
 import com.ticketing.eventservice.dto.EventRequestDto;
 import com.ticketing.eventservice.entity.Event;
+import com.ticketing.eventservice.exception.ResourceNotFoundException;
 import com.ticketing.eventservice.repository.EventRepository;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,6 @@ public class EventService {
 
     public Event getEventById(Long id) {
         return eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with ID: " + id));
     }
 }
