@@ -1,14 +1,14 @@
 package com.ticketing.eventservice.controller;
 
 import com.ticketing.eventservice.dto.EventRequestDto;
+import com.ticketing.eventservice.dto.EventResponseDto;
 import com.ticketing.eventservice.entity.Event;
 import com.ticketing.eventservice.service.EventService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/events")
@@ -25,14 +25,19 @@ public class EventController {
         Event createdEvent = eventService.createEvent(request);
         return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
     }
-
-    @GetMapping
-    public ResponseEntity<List<Event>> getAllEvents() {
-        return ResponseEntity.ok(eventService.getAllEvents());
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable Long id) {
         return ResponseEntity.ok(eventService.getEventById(id));
+    }
+    @GetMapping
+    public ResponseEntity<Page<EventResponseDto>> getAllEvents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "eventDate") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String keyword
+    ) {
+        Page<EventResponseDto> events = eventService.getAllEvents(page, size, sortBy, sortDir, keyword);
+        return ResponseEntity.ok(events);
     }
 }
