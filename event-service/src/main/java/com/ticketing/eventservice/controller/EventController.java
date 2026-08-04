@@ -40,4 +40,17 @@ public class EventController {
         Page<EventResponseDto> events = eventService.getAllEvents(page, size, sortBy, sortDir, keyword);
         return ResponseEntity.ok(events);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<EventResponseDto> updateEvent(
+            @PathVariable Long id,
+            @RequestBody EventRequestDto dto
+    ) {
+        return ResponseEntity.ok(eventService.updateEvent(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
+        eventService.deleteEvent(id);
+        return ResponseEntity.ok("Event deleted successfully with ID: " + id);
+    }
 }

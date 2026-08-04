@@ -65,6 +65,27 @@ public class EventService {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found with ID: " + id));
     }
+    public EventResponseDto updateEvent(Long id, EventRequestDto dto) {
+        Event existingEvent = eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with ID: " + id));
+
+        existingEvent.setTitle(dto.getTitle());
+        existingEvent.setDescription(dto.getDescription());
+        existingEvent.setVenue(dto.getVenue());
+        existingEvent.setEventDate(dto.getEventDate());
+        existingEvent.setTicketPrice(dto.getTicketPrice());
+        existingEvent.setTotalSeats(dto.getTotalSeats());
+
+        Event updatedEvent = eventRepository.save(existingEvent);
+        return mapToDto(updatedEvent);
+    }
+
+    // Delete an event by ID
+    public void deleteEvent(Long id) {
+        Event existingEvent = eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with ID: " + id));
+        eventRepository.delete(existingEvent);
+    }
 
     // Private Helper Method to Map Entity -> DTO
     private EventResponseDto mapToDto(Event event) {
