@@ -33,6 +33,9 @@ public class Event {
     @Column(nullable = false)
     private Integer availableSeats;
 
+    @Column(nullable = false)
+    private Boolean isActive = true;
+
     public Event() {}
 
     public Event(String title, String description, String venue, LocalDateTime eventDate, BigDecimal ticketPrice, Integer totalSeats) {
@@ -43,6 +46,7 @@ public class Event {
         this.ticketPrice = ticketPrice;
         this.totalSeats = totalSeats;
         this.availableSeats = totalSeats;
+        this.isActive = true;
     }
 
     // Getters and Setters
@@ -69,4 +73,7 @@ public class Event {
 
     public Integer getAvailableSeats() { return availableSeats; }
     public void setAvailableSeats(Integer availableSeats) { this.availableSeats = availableSeats; }
+
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
 }
