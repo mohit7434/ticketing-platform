@@ -53,4 +53,11 @@ public class EventController {
         eventService.deleteEvent(id);
         return ResponseEntity.ok("Event deleted successfully with ID: " + id);
     }
+    @PatchMapping("/{id}/reserve")
+    public ResponseEntity<EventResponseDto> reserveSeats(
+            @PathVariable Long id,
+            @RequestParam int seats
+    ) {
+        return ResponseEntity.ok(eventService.reserveSeats(id, seats));
+    }
 }

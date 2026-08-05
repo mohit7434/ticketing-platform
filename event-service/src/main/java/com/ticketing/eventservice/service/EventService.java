@@ -99,4 +99,18 @@ public class EventService {
         dto.setTotalSeats(event.getTotalSeats());
         return dto;
     }
+    // Decrement seats when a booking is confirmed
+    public EventResponseDto reserveSeats(Long id, int seatsToBook) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with ID: " + id));
+
+        if (event.getTotalSeats() < seatsToBook) {
+            throw new IllegalStateException("Not enough seats available. Requested: "
+                    + seatsToBook + ", Available: " + event.getTotalSeats());
+        }
+
+        event.setTotalSeats(event.getTotalSeats() - seatsToBook);
+        Event updatedEvent = eventRepository.save(event);
+        return mapToDto(updatedEvent);
+    }
 }
