@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -13,14 +14,14 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // Secret key for signing the token (must be at least 256 bits / 32 characters long)
-    private final String SECRET_STRING = "your-super-secret-32-byte-long-key-string-for-jwt-signing!";
-    private final SecretKey key = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
+    private final SecretKey key;
+    private final long EXPIRATION_TIME = 3600000; // 1 hour
 
-    // Token expiration time: 1 hour in milliseconds
-    private final long EXPIRATION_TIME = 3600000;
+    // Read the secret directly from application.properties
+    public JwtUtil(@Value("${jwt.secret}") String secretString) {
+        this.key = Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
+    }
 
-    // 1. Generate JWT Token with Claims
     public String generateToken(String username, String role) {
         return Jwts.builder()
                 .subject(username)
@@ -31,7 +32,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 2. Validate Token
     public boolean validateToken(String token) {
         try {
             getClaims(token);
@@ -41,17 +41,14 @@ public class JwtUtil {
         }
     }
 
-    // 3. Extract Username from Token
     public String getUsernameFromToken(String token) {
         return getClaims(token).getSubject();
     }
 
-    // 4. Extract Role from Token
     public String getRoleFromToken(String token) {
         return getClaims(token).get("role", String.class);
     }
 
-    // Helper method to parse Claims
     private Claims getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(key)
