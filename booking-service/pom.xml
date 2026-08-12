@@ -58,7 +58,6 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependencies>
             <!-- Web & Database -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -114,8 +113,7 @@
                     <scope>import</scope>
                 </dependency>
             </dependencies>
-        </dependencyManagement>
-    </dependencies>
+       </dependencyManagement>
 
     <build>
         <plugins>
