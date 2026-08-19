@@ -46,7 +46,7 @@ public class AuthService {
         return "User registered successfully";
     }
 
-    // 2. LOGIN (Generates both Access Token & Refresh Token)
+    // 2. LOGIN
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
@@ -55,19 +55,19 @@ public class AuthService {
             throw new InvalidCredentialsException("Invalid username or password");
         }
 
-        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole());
+        String accessToken = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
 
         return new AuthResponse(accessToken, refreshToken.getToken());
     }
 
-    // 3. REFRESH TOKEN ACCESS POINT
+    // 3. REFRESH TOKEN
     public AuthResponse refreshToken(TokenRefreshRequest request) {
         return refreshTokenService.findByToken(request.getRefreshToken())
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    String newAccessToken = jwtUtil.generateToken(user.getUsername(), user.getRole());
+                    String newAccessToken = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
                     return new AuthResponse(newAccessToken, request.getRefreshToken());
                 })
                 .orElseThrow(() -> new InvalidCredentialsException("Refresh token is not present in database!"));

@@ -17,14 +17,14 @@ public class JwtUtil {
     private final SecretKey key;
     private final long EXPIRATION_TIME = 3600000; // 1 hour
 
-    // Read the secret directly from application.properties
     public JwtUtil(@Value("${jwt.secret}") String secretString) {
         this.key = Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String username, String role) {
+    public String generateToken(Long userId, String username, String role) {
         return Jwts.builder()
                 .subject(username)
+                .claim("userId", userId)
                 .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
@@ -43,6 +43,11 @@ public class JwtUtil {
 
     public String getUsernameFromToken(String token) {
         return getClaims(token).getSubject();
+    }
+
+    public Long getUserIdFromToken(String token) {
+        Object userId = getClaims(token).get("userId");
+        return (userId instanceof Number number) ? number.longValue() : null;
     }
 
     public String getRoleFromToken(String token) {
